@@ -1,9 +1,18 @@
-const http = require("http");
+const path = require("path");
+const parser = require("body-parser");
+const express = require("express");
+const app = express();
 
-const routes = require("./routes");
+const admin = require("./routes/admin");
+const shop = require("./routes/shop");
+const rootDir = require("./utils/path");
 
-const server = http.createServer(routes);
+app.use(parser.urlencoded({ extended: false }));
 
-server.listen(3000);
+app.use("/admin", admin);
+app.use(shop);
 
-//hello
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(rootDir, "views", "error.html"));
+});
+app.listen(3000);
